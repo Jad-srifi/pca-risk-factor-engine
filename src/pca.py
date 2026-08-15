@@ -11,8 +11,8 @@ def extract_eigen(sigma: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return (sorted_eigenvalues, sorted_eigenvectors)
 
 def variance_explained(eigenvalues: np.ndarray) -> np.ndarray:
-    eigenvalues = eigenvalues / np.sum(eigenvalues)
-    return eigenvalues
+    variance_ratio = eigenvalues / np.sum(eigenvalues)
+    return variance_ratio
 
 def reduce_dimensions(eigenvalues: np.ndarray, eigenvectors: np.ndarray, threshold=0.95) -> tuple[np.ndarray, np.ndarray]:
     cumulative_variance = np.cumsum(eigenvalues)

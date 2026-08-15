@@ -43,7 +43,7 @@ def generate_synthetic_data(T: int, N: int, seed: int=19) -> np.ndarray:
         
         target_dir.mkdir(parents=True, exist_ok=True)
         
-        file_path = target_dir / f'synthetic_market_{seed}.npy'
+        file_path = target_dir / f'synthetic_market_{T}X{N}_{seed}.npy'
         
         np.save(file_path, R)
         return R

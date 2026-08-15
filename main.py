@@ -1,46 +1,10 @@
-import numpy as np
-from src.generator import generate_synthetic_data
-from src.covariance import empirical_cov_matrix
-from src.pca import extract_eigen, variance_explained, reduce_dimensions
+from pathlib import Path
+from pipeline import run_pipeline
 
-def run_pipeline(load_path=None, seed: int=19, T: int=1000, N: int=5) -> tuple[np.ndarray, np.ndarray]:
-    if load_path is None:
-        data = generate_synthetic_data(T, N, seed)
-    else:
-        try:
-            data = np.load(load_path)
-        except:
-            raise ValueError("Loading path no found")
+if __name__ == '__main__':
+    current_dir = Path(__file__).resolve()
+    data_path = current_dir.parent / 'data' / 'synthetic_market_1000X5_19.npy'
 
-    covariance_matrix = empirical_cov_matrix(data)
-    
-    eigenVal, eigenVec = extract_eigen(covariance_matrix)
-    
-    variance = variance_explained(eigenVal)
-    
-    compressed_eigenVal, compressed_eigenVec = reduce_dimensions(variance, eigenVec)
-    
-    return (compressed_eigenVal, compressed_eigenVec)
-
-path = 'C:\\Users\\Jad\\Documents\\Quant Trading Projects\\Phase 1\\PCA Risk-Factor Demo Pipeline\\data\\synthetic_market_19.npy'
-
-data = np.load(path)
-
-cov = empirical_cov_matrix(data)
-
-eigenVal, eigenVec = extract_eigen(cov)
-
-variance = variance_explained(eigenVal)
-
-cVal, cVec = reduce_dimensions(variance, eigenVec)
-
-print("Data: \n", data)
-print("Covariance matrix: \n", cov)
-print("Eigenvalues: \n", eigenVal, "\nEigenvectors: \n", eigenVec)
-print("Variance Explained:\n", variance)
-print("Reduced Dimensions:\n", cVal, "\nEigenvectors: \n", cVec)
-
-nVal, nVec = run_pipeline(load_path=path)
-
-print("\nNew:\n")
-print("Reduced Dimensions:\n", nVal, "\nEigenvectors: \n", nVec)
+    nVal, nVec = run_pipeline(load_path=data_path)
+    print(f"[SYSTEM] Selected Variance Explained: {nVal}")
+    print(f"[SYSTEM] Compressed Factors: {nVec.shape}")
