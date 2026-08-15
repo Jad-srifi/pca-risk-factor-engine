@@ -14,9 +14,9 @@ The pipeline is structured into four sequential, vectorized engines:
 
 Randomly generated covariance matrices violate the laws of probability (yielding negative variances and crashing PCA solvers). This module physically constructs a strictly Positive Semi-Definite (PSD) matrix utilizing factor loadings and idiosyncratic noise:
 
-$\Sigma = LL^T + D$
+**$\Sigma = LL^T + D$**
 
-Outputs a simulated log-return matrix: $R \in \mathbb{R}^{T \times N}$
+Outputs a simulated log-return matrix: **$R \in \mathbb{R}^{T \times N}$**
 
 ![Data Generated](https://github.com/user-attachments/assets/32f87ff0-cefe-4dc7-93ee-5c01e4f173ec)
 
@@ -24,11 +24,11 @@ Outputs a simulated log-return matrix: $R \in \mathbb{R}^{T \times N}$
 
 Isolates pure kinetic energy (variance) by stripping the expected daily drift (the ocean current) using NumPy broadcasting, bypassing computationally expensive iterative loops.
 
-- Mean Centering: $X = R - \mathbf{1}\mu^T$
+**- Mean Centering: $X = R - \mathbf{1}\mu^T$**
 
 ![Data Centered](https://github.com/user-attachments/assets/f050edc8-b4f9-4f68-be43-044156342812)
 
-- Empirical Covariance: $\Sigma = \frac{1}{T-1} X^T X$
+**- Empirical Covariance: $\Sigma = \frac{1}{T-1} X^T X$**
 
 ![Covariance Heatmap](https://github.com/user-attachments/assets/688762c3-2b65-427a-8bc3-98aad7174e6c)
 
@@ -36,13 +36,13 @@ Isolates pure kinetic energy (variance) by stripping the expected daily drift (t
 
 Utilizes a Hermitian solver (np.linalg.eigh) to extract real eigenvalues and strictly orthogonal eigenvectors, ensuring the mathematical geometry perfectly aligns with the market's risk structure.
 
-$\Sigma = W \Lambda W^T$
+**$\Sigma = W \Lambda W^T$**
 
 ### 4. Dimensional Compression
 
 Translates raw kinetic energy into Trace Equivalence (percentage of total system risk). It computes the cumulative sum of the variance via the C-backend and truncates the matrices once a defined threshold (e.g., $95\%$) is breached, dropping statistical noise.
 
-$V_i = \frac{\lambda_i}{\sum_{j=1}^N \lambda_j}$
+**$V_i = \frac{\lambda_i}{\sum_{j=1}^N \lambda_j}$**
 
 ![PCA Eigenvectors](https://github.com/user-attachments/assets/a01a7137-4728-41ec-8c2a-b48fa8ee64e0)
 
@@ -59,12 +59,13 @@ $V_i = \frac{\lambda_i}{\sum_{j=1}^N \lambda_j}$
 ├── notebooks/            # Interactive Research & Visualization
 │   ├── 01_data_generation_and_psd.ipynb
 │   ├── 02_covariance_and_centering.ipynb
-│   └── 03_pca_and_variance_attribution.ipynb
+│   ├── 03_pca_and_variance_attribution.ipynb
+|   └── 04_visualization_and_geometry.ipynb
 │
 ├── data/                 # Binary .npy storage for matrix states
 │
 ├── main.py               # Master orchestration switchboard
-├── visualize_pca.py      # 2D visual mapping of the PCA physics
+├── pipeline.py      # Pipeline to run the whole project in order
 └── README.md
 ```
 
@@ -83,10 +84,10 @@ The notebooks/ directory contains the theoretical proofs translated into interac
 
 ### 🚀 Execution
 
-The pipeline is orchestrated entirely through **main.py**.
+The pipeline is orchestrated entirely through **pipeline.py**.
 
-**Execute the pipeline with default synthetic generation (T=1000, N=5)
-python main.py**
+Execute the pipeline with default synthetic generation (T=1000, N=5)
+**python main.py**
 
 **Expected Output Readout:**
 - [SYSTEM] Selected Variance Explained: [0.82, 0.11, 0.05]
